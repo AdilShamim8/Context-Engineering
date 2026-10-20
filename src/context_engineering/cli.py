@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 
 from .assembly import OrderingStrategy, assemble
@@ -106,6 +107,55 @@ def cmd_inspect(args) -> int:
     return 0
 
 
+def _resolve_repo_path(relative: str) -> str:
+    """Resolve a default path against the CWD (commands run from repo root)."""
+    if os.path.isabs(relative):
+        return relative
+    return relative
+
+
+def cmd_ask(args) -> int:
+    from .apps.knowledge_assistant import answer_question
+    from .corpus import default_corpus_dir
+
+    access = tuple(level.strip() for level in args.access.split(",") if level.strip())
+    result = answer_question(
+        args.question,
+        access_levels=access,
+        corpus_dir=default_corpus_dir(),
+        screening_policy=args.screening,
+    )
+    print(result.summary())
+    if args.show_context:
+        print("\n=== ASSEMBLED CONTEXT ===")
+        print(result.assembled.text)
+        print(f"\n(assembled size: {result.assembled.tokens} tokens, estimate)")
+    if args.show_trace:
+        print("\n=== TRACE ===")
+        print(result.trace.render())
+    return 0 if result.answer.status in ("answered", "insufficient_evidence") else 1
+
+
+def cmd_evaluate(args) -> int:
+    from .apps.knowledge_assistant import golden_case_pipeline
+    from .corpus import default_corpus_dir
+    from .evaluation import load_cases, run_suite
+
+    suite_path = args.suite or _resolve_repo_path(
+        os.path.join("datasets", "synthetic", "golden", "golden_cases.json")
+    )
+    corpus_dir = default_corpus_dir()
+
+    # The app caches its index per corpus dir; make sure it exists for the suite run.
+    from .apps.knowledge_assistant import _index_for  # noqa: F401 (warm the cache)
+
+    _index_for(corpus_dir)
+    cases = load_cases(suite_path)
+    report = run_suite(cases, golden_case_pipeline)
+    print(report.render())
+    return 0 if report.passed_count == report.total else 1
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="context-engineering",
@@ -129,6 +179,27 @@ def build_parser() -> argparse.ArgumentParser:
     p_inspect.add_argument("--mark-spans", action="store_true",
                            help="Annotate component boundaries in the assembled text")
     p_inspect.set_defaults(func=cmd_inspect)
+
+    p_ask = sub.add_parser(
+        "ask", help="Ask the capstone knowledge assistant a question (deterministic, offline)"
+    )
+    p_ask.add_argument("question")
+    p_ask.add_argument("--access", default="public,internal",
+                       help="Comma-separated access levels for the caller (default: public,internal)")
+    p_ask.add_argument("--show-context", action="store_true",
+                       help="Print the exact assembled request")
+    p_ask.add_argument("--show-trace", action="store_true",
+                       help="Print the per-stage execution trace")
+    p_ask.add_argument("--screening", choices=["label", "block"], default="label",
+                       help="Security screening policy: label (default) or block")
+    p_ask.set_defaults(func=cmd_ask)
+
+    p_evaluate = sub.add_parser(
+        "evaluate", help="Run the golden evaluation suite through the capstone assistant"
+    )
+    p_evaluate.add_argument("--suite", default=None,
+                            help="Path to a golden case JSON file (default: the repository suite)")
+    p_evaluate.set_defaults(func=cmd_evaluate)
 
     return parser
 
