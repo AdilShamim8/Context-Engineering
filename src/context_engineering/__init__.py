@@ -46,5 +46,8 @@ from .provenance import (
     select_current_versions,
 )
 from .corpus import Document, default_corpus_dir, load_chunks, load_corpus
+from .selection import SelectionPolicy, rank, to_components
+from .compression import deduplicate, extractive_compress, structured_notes
+from .pipeline import Pipeline, PipelineStage, StageError
 
 __version__ = "0.1.0"
