@@ -51,5 +51,13 @@ from .compression import deduplicate, extractive_compress, structured_notes
 from .pipeline import Pipeline, PipelineStage, StageError
 from .history import ConversationHistory, Turn
 from .memory import MemoryRecord, MemoryStore
+from .tools import ToolRegistry, ToolResult, ToolSpec, validate_args
+from .orchestrator import (
+    Checkpoint,
+    CheckpointStore,
+    TaskState,
+    Workflow,
+    WorkflowStage,
+)
 
 __version__ = "0.1.0"
