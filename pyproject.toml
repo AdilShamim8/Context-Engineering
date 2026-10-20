@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "context-engineering"
+version = "0.1.0"
+description = "First-principles reference library for the Context-Engineering curriculum: token estimation, context assembly, budgeting, retrieval, memory, security screening, and evaluation."
+readme = "README.md"
+requires-python = ">=3.10"
+# Intentionally no runtime dependencies: the curriculum is fully reproducible
+# on a plain Python install. Optional integrations stay behind interfaces.
+
+[project.optional-dependencies]
+# Nothing here is required for the curriculum. Adapters (exact tokenizers,
+# embedding providers) are optional and isolated behind library interfaces.
+dev = ["pytest>=7.0"]
+
+[project.scripts]
+context-engineering = "context_engineering.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
