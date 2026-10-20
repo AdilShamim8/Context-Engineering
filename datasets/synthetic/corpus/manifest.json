@@ -1,0 +1,129 @@
+{
+  "corpus": "nimbus-dynamics",
+  "fictional": true,
+  "description": "Synthetic corporate knowledge base for the Context Engineering curriculum. All content is fictional.",
+  "documents": [
+    {
+      "id": "hr-remote-work",
+      "file": "hr-remote-work-v2.md",
+      "title": "Remote Work Policy",
+      "version": "2",
+      "effective_date": "2026-08-14",
+      "access": "internal",
+      "owner": "people-ops",
+      "supersedes": "hr-remote-work v1",
+      "synthetic_injection": false
+    },
+    {
+      "id": "hr-remote-work",
+      "file": "hr-remote-work-v1.md",
+      "title": "Remote Work Policy (SUPERSEDED — kept for versioning labs)",
+      "version": "1",
+      "effective_date": "2024-02-01",
+      "access": "internal",
+      "owner": "people-ops",
+      "superseded_by": "hr-remote-work v2",
+      "synthetic_injection": false
+    },
+    {
+      "id": "hr-vacation",
+      "file": "hr-vacation.md",
+      "title": "Vacation and PTO Policy",
+      "version": "3",
+      "effective_date": "2026-01-20",
+      "access": "internal",
+      "owner": "people-ops",
+      "synthetic_injection": false
+    },
+    {
+      "id": "benefits-faq",
+      "file": "benefits-faq.md",
+      "title": "Benefits FAQ",
+      "version": "5",
+      "effective_date": "2026-03-02",
+      "access": "internal",
+      "owner": "people-ops",
+      "synthetic_injection": false
+    },
+    {
+      "id": "onboarding-guide",
+      "file": "onboarding-guide.md",
+      "title": "New Hire Onboarding Guide",
+      "version": "4",
+      "effective_date": "2026-04-10",
+      "access": "internal",
+      "owner": "people-ops",
+      "synthetic_injection": false
+    },
+    {
+      "id": "data-retention-schedule",
+      "file": "data-retention-schedule.md",
+      "title": "Data Retention Schedule",
+      "version": "2",
+      "effective_date": "2025-12-01",
+      "access": "internal",
+      "owner": "legal-compliance",
+      "synthetic_injection": false
+    },
+    {
+      "id": "engineering-deployment-runbook",
+      "file": "engineering-deployment-runbook.md",
+      "title": "Deployment Runbook",
+      "version": "7",
+      "effective_date": "2026-09-18",
+      "access": "internal",
+      "owner": "platform-reliability",
+      "synthetic_injection": false
+    },
+    {
+      "id": "feature-flags-guide",
+      "file": "feature-flags-guide.md",
+      "title": "Feature Flag Governance Guide",
+      "version": "1",
+      "effective_date": "2026-10-02",
+      "access": "internal",
+      "owner": "platform-reliability",
+      "synthetic_injection": false
+    },
+    {
+      "id": "api-style-guide",
+      "file": "api-style-guide.md",
+      "title": "API Style Guide",
+      "version": "3",
+      "effective_date": "2026-08-20",
+      "access": "internal",
+      "owner": "architecture-council",
+      "synthetic_injection": false
+    },
+    {
+      "id": "support-playbook",
+      "file": "support-playbook.md",
+      "title": "Customer Support Playbook",
+      "version": "2",
+      "effective_date": "2026-06-05",
+      "access": "internal",
+      "owner": "customer-support",
+      "synthetic_injection": true
+    },
+    {
+      "id": "hr-compensation-bands",
+      "file": "hr-compensation-bands.md",
+      "title": "Compensation Bands (RESTRICTED)",
+      "version": "6",
+      "effective_date": "2026-09-01",
+      "access": "restricted:hr-confidential",
+      "owner": "hr-compensation-committee",
+      "synthetic_injection": false
+    },
+    {
+      "id": "security-incident-report-2026-07",
+      "file": "security-incident-report-2026-07.md",
+      "title": "Security Incident Report INC-2026-0714 (RESTRICTED)",
+      "version": "1",
+      "effective_date": "2026-07-30",
+      "access": "restricted:security-team",
+      "owner": "security-team",
+      "synthetic_injection": false
+    }
+  ]
+}

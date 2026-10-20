@@ -35,5 +35,16 @@ from .assembly import (
     render_component,
 )
 from .sim import Answer, DeterministicResponder
+from .chunking import chunk_by_words, chunk_markdown
+from .retrieval import Chunk, LexicalIndex, RetrievedChunk, rrf_fuse
+from .provenance import (
+    ACCESS_UNKNOWN,
+    AccessPolicy,
+    FreshnessPolicy,
+    FreshnessVerdict,
+    group_by_source,
+    select_current_versions,
+)
+from .corpus import Document, default_corpus_dir, load_chunks, load_corpus
 
 __version__ = "0.1.0"
