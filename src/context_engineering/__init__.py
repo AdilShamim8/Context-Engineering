@@ -59,5 +59,14 @@ from .orchestrator import (
     Workflow,
     WorkflowStage,
 )
+from .security import (
+    Finding,
+    SecurityScreeningError,
+    enforce_no_high_severity,
+    has_high_severity,
+    redact,
+    screen_untrusted,
+    wrap_untrusted,
+)
 
 __version__ = "0.1.0"
