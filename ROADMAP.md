@@ -17,7 +17,7 @@ This file tracks what exists, what is planned, and what comes next. The curricul
 | Part VIII — Production | Chapters 30–33, hardened pipeline | Complete |
 | Part IX — Capstone | Chapters 34–39, knowledge assistant application, project portfolio | Complete |
 | Projects | Beginner (2), intermediate (3), advanced (3), capstone (1+) | Complete |
-| Labs | 7 guided labs with solutions | Complete |
+| Labs | 3 standalone labs + chapter-embedded lab work across Parts II–VI | Complete |
 
 ## Deliberate scope decisions
 
