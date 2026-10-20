@@ -80,6 +80,10 @@ class TestWrapping(unittest.TestCase):
 
 
 class TestRedaction(unittest.TestCase):
+    # NOTE: the token-shaped strings below are SYNTHETIC FIXTURES (obvious
+    # alphabet sequences) required to test the redactor. Never place real
+    # credentials in tests or fixtures; a real leak is compromised on sight.
+
     def test_credentials_redacted(self):
         text = "the key was ghp_ABCDEFGHIJKLMNOPQRSTUVWXYZ123456 in the config"
         self.assertNotIn("ghp_", redact(text))

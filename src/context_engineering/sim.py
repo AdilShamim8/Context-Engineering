@@ -86,7 +86,12 @@ class DeterministicResponder:
         return comp.effective_label or comp.id
 
     def candidates(self, question: str, bundle: ContextBundle) -> list:
-        """All grounding sentences scored by keyword coverage (best first)."""
+        """All grounding sentences scored by keyword coverage (best first).
+
+        Ties break toward LONGER sentences: corpus headings render as short
+        pseudo-sentences ("Remote Days.") that can tie with the sentence
+        carrying the actual answer; the more informative sentence wins.
+        """
         q_words = _keywords(question)
         found: list = []
         if not q_words:
@@ -105,7 +110,8 @@ class DeterministicResponder:
                         score=score,
                     )
                 )
-        found.sort(key=lambda c: c.score, reverse=True)
+        # Sort by (score, informativeness); stable within true ties.
+        found.sort(key=lambda c: (-c.score, -len(_keywords(c.text))))
         return found
 
     def answer(self, question: str, bundle: ContextBundle) -> Answer:

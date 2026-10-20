@@ -68,5 +68,15 @@ from .security import (
     screen_untrusted,
     wrap_untrusted,
 )
+from .evaluation import (
+    CaseResult,
+    GoldenCase,
+    SuiteReport,
+    ablate,
+    evaluate_answer,
+    load_cases,
+    run_suite,
+)
+from .observability import ContextTrace, TraceEvent
 
 __version__ = "0.1.0"
