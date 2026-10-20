@@ -23,11 +23,21 @@ cd Context-Engineering
 # Run the full test suite (no dependencies needed; Python 3.10+)
 python -m unittest discover
 
+# Make the library importable (pick one):
+pip install -e .                       # recommended: enables the CLI everywhere
+export PYTHONPATH=src                  # or run everything with PYTHONPATH=src
+
+# Explore how a component bundle allocates under budget pressure
+python -m context_engineering.cli budget
+
+# Inspect exactly what context gets assembled for a question
+python -m context_engineering.cli inspect
+
 # Ask the capstone assistant a question (fully offline)
 python -m context_engineering.cli ask "How many remote days per week are allowed?"
 
-# Inspect exactly what context would be assembled for a question
-python -m context_engineering.cli inspect "How many remote days per week are allowed?"
+# Run the evaluation suite
+python -m context_engineering.cli evaluate
 ```
 
 Full setup instructions, including troubleshooting: `docs/getting-started.md`.

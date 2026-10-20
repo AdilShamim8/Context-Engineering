@@ -1,0 +1,143 @@
+"""Command-line interface for the reference library (Projects 1–2, capstone).
+
+Subcommands:
+
+- ``budget``  (Project: Context Budget Explorer) — allocate the demo
+  bundle under a context budget and print the full allocation report.
+- ``inspect`` (Project: Context Inspector) — print every component's
+  fate and the exact assembled request text, with span markers.
+
+Later parts of the curriculum add:
+
+- ``ask``      the deterministic knowledge assistant (Chapter 35)
+- ``evaluate`` the golden evaluation suite (Chapter 27)
+
+Run from the repository root, either with an editable install
+(``pip install -e .``) or via ``PYTHONPATH=src`` — see
+``docs/getting-started.md``.
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import sys
+
+from .assembly import OrderingStrategy, assemble
+from .budget import AllocationResult, ContextBudget, allocate
+from .context import ComponentKind, ContextComponent, SourceRef, TrustLevel
+
+
+def load_bundle(path: str):
+    """Load a component bundle JSON file into ContextComponents."""
+    with open(path, encoding="utf-8") as fh:
+        data = json.load(fh)
+    components: list = []
+    for entry in data["components"]:
+        source = None
+        if entry.get("source"):
+            source = SourceRef(**entry["source"])
+        components.append(
+            ContextComponent(
+                id=entry["id"],
+                kind=ComponentKind(entry["kind"]),
+                content=entry["content"],
+                priority=int(entry.get("priority", 5)),
+                trust=TrustLevel(entry.get("trust", "neutral")),
+                source=source,
+            )
+        )
+    return data, components
+
+
+def _print_bundle_overview(components) -> None:
+    print(f"{'ID':<26}{'KIND':<17}{'TRUST':<11}{'PRI':<5}TOKENS")
+    for comp in components:
+        print(
+            f"{comp.id:<26}{comp.kind.value:<17}{comp.trust.value:<11}"
+            f"{comp.priority:<5}{comp.token_count()}"
+        )
+
+
+def cmd_budget(args) -> int:
+    data, components = load_bundle(args.bundle)
+    budget = ContextBudget(
+        total_tokens=args.total,
+        reserved_output_tokens=args.reserved_output,
+    )
+    print(f"Demo bundle: {args.bundle} ({len(components)} components)")
+    print(f"Question: {data.get('question', '')}")
+    print()
+    try:
+        result = allocate(components, budget)
+    except Exception as exc:  # BudgetError is the expected kind here
+        print(f"ALLOCATION ERROR: {exc}", file=sys.stderr)
+        return 1
+    print(result.report())
+    print()
+    included = sum(1 for r in result.records if r.action == "included")
+    truncated = sum(1 for r in result.records if r.action == "truncated")
+    dropped = sum(1 for r in result.records if r.action == "dropped")
+    print(f"Summary: {included} included, {truncated} truncated, {dropped} dropped")
+    print(f"Context tokens used: {result.total_allocated} of {budget.available_for_context} available")
+    return 0
+
+
+def cmd_inspect(args) -> int:
+    data, components = load_bundle(args.bundle)
+    print("=== COMPONENTS ===")
+    _print_bundle_overview(components)
+    print(f"\nTotal bundle size: {sum(c.token_count() for c in components)} tokens")
+    print()
+    assembled = assemble(components, strategy=OrderingStrategy.KIND_GROUPED)
+    print("=== ASSEMBLED REQUEST (kind-grouped ordering) ===")
+    if args.mark_spans:
+        lines = assembled.text.split("\n")
+        for line in lines:
+            marker = ""
+            for cid, (start, _end) in assembled.spans.items():
+                if start <= assembled.text.find(line) < _end and line.startswith("## "):
+                    marker = f"   <-- {cid}"
+            print(line + marker)
+    else:
+        print(assembled.text)
+    print()
+    print(f"Assembled size: {assembled.tokens} tokens (estimate)")
+    return 0
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        prog="context-engineering",
+        description="Reference CLI for the Context Engineering curriculum.",
+    )
+    sub = parser.add_subparsers(dest="command", required=True)
+
+    p_budget = sub.add_parser(
+        "budget", help="Allocate the demo bundle under a context budget (Budget Explorer)"
+    )
+    p_budget.add_argument("--total", type=int, default=2000,
+                          help="Total window tokens (default 2000 — deliberately tight)")
+    p_budget.add_argument("--reserved-output", type=int, default=512)
+    p_budget.add_argument("--bundle", default="datasets/synthetic/demo_bundle.json")
+    p_budget.set_defaults(func=cmd_budget)
+
+    p_inspect = sub.add_parser(
+        "inspect", help="Print every component and the assembled request (Context Inspector)"
+    )
+    p_inspect.add_argument("--bundle", default="datasets/synthetic/demo_bundle.json")
+    p_inspect.add_argument("--mark-spans", action="store_true",
+                           help="Annotate component boundaries in the assembled text")
+    p_inspect.set_defaults(func=cmd_inspect)
+
+    return parser
+
+
+def main(argv=None) -> int:
+    parser = build_parser()
+    args = parser.parse_args(argv)
+    return args.func(args)
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

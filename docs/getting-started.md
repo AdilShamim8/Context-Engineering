@@ -21,6 +21,13 @@ git clone https://github.com/AdilShamim8/Context-Engineering.git
 cd Context-Engineering
 ```
 
+Make the library importable — pick one:
+
+```bash
+pip install -e .          # recommended: installs the package and the `context-engineering` command
+export PYTHONPATH=src     # zero-install alternative; prefix every CLI command below with PYTHONPATH=src
+```
+
 That is the entire installation. If you prefer an isolated environment (optional — there is nothing to install into it):
 
 ```bash
@@ -51,16 +58,19 @@ You will see the same question answered three ways as the available context chan
 
 The third outcome is the most important one in the entire lab: nothing crashed, nothing looked wrong, and the answer was confidently outdated. That is a context-engineering failure, and the curriculum exists to teach you to prevent it. Chapter 0.3 walks through the code line by line.
 
-## Try the capstone assistant (1 minute)
+## Try the CLI tools (2 minutes)
 
 Skip ahead and see where the curriculum ends:
 
 ```bash
+# Explore allocation under budget pressure (Context Budget Explorer)
+python -m context_engineering.cli budget
+
+# See the exact context that gets assembled (Context Inspector)
+python -m context_engineering.cli inspect
+
 # Ask a question of the Nimbus Dynamics knowledge base (fictional data)
 python -m context_engineering.cli ask "How many remote days per week are allowed?"
-
-# See the exact context that gets assembled for the same question
-python -m context_engineering.cli inspect "How many remote days per week are allowed?"
 ```
 
 The `inspect` command is the single most valuable habit this curriculum teaches: **never argue about what the model saw — look at it.**
@@ -89,7 +99,7 @@ This is **not required** for any chapter; `python -m context_engineering.cli` wo
 | Symptom | Likely cause | Fix |
 |---|---|---|
 | `python: command not found` | Python is registered as `python3` | Use `python3` in every command |
-| `No module named context_engineering` | Running from the wrong directory | Run commands from the repository root; the CLI and tests add `src/` to the path automatically |
+| `No module named context_engineering` | Library not importable | Run `pip install -e .`, or prefix commands with `PYTHONPATH=src` |
 | Tests fail with `ImportError` | Mixed Python versions (e.g., tests run with 3.8) | Check `python3 --version`; the library requires 3.10+ |
 | `Permission denied` on scripts | Clone extracted with odd permissions | Re-clone, or run with `python <script>` instead of executing it directly |
 | Unicode garbling on Windows terminals | Code page issues in cmd.exe | Use Windows Terminal / PowerShell with UTF-8 enabled |
